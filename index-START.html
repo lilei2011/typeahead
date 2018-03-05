@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Type Ahead 👀</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <form class="search-form">
+    <input type="text" class="search" placeholder="City or State">
+    <ul class="suggestions">
+      <li>Filter for a city</li>
+      <li>or a state</li>
+    </ul>
+  </form>
+<script>
+const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+
+const cities = [];
+fetch(endpoint)
+  .then(response => response.json())
+  .then(data => cities.push(...data));
+
+//console.log(cities);
+
+const inputField = document.querySelector(".search");
+
+let timer = null; //declare the timer variable in the global scope
+
+inputField.addEventListener("keyup", function(){
+
+  clearTimeout(timer);
+  //console.log(timer);
+
+  timer = setTimeout(function(){
+
+    let input = inputField.value.trim();
+    
+    let list = document.querySelector(".suggestions");
+
+    list.innerHTML = "";
+
+    let matches = findMatches(input, cities);
+    
+    for(let i=0; i<matches.length; i++){
+      let li = document.createElement("li");
+      let name = document.createElement("span");
+      name.innerHTML = matches[i].city;
+      li.appendChild(name);
+      let state = document.createElement("span");
+      state.innerHTML = matches[i].state;
+      li.appendChild(state);
+      list.appendChild(li);
+    }
+  }, 500);
+ 
+});
+
+function findMatches(input, cities) {
+  return cities.filter(cityEntry => 
+       cityEntry.city.indexOf(input)>=0 || cityEntry.state.indexOf(input)>=0 );
+
+}
+
+
+
+</script>
+  </body>
+</html>
