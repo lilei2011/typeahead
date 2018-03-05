@@ -28,8 +28,7 @@ const inputField = document.querySelector(".search");
 
 let timer = null; //declare the timer variable in the global scope
 
-inputField.addEventListener("keyup", function(){
-
+function debounce() {
   clearTimeout(timer);
   //console.log(timer);
 
@@ -42,26 +41,27 @@ inputField.addEventListener("keyup", function(){
     list.innerHTML = "";
 
     let matches = findMatches(input, cities);
+    console.log(matches);
+
+    list.innerHTML = matches.map(match => {
+      const city = match.city.replace(input, `<span class="hl">${input}</span>`);
+     
+      const state = match.state.replace(input, `<span class="hl">${input}</span>`);
+      return `<li><span>${city}, ${state}</span></li>`}).join("");
+
     
-    for(let i=0; i<matches.length; i++){
-      let li = document.createElement("li");
-      let name = document.createElement("span");
-      name.innerHTML = matches[i].city;
-      li.appendChild(name);
-      let state = document.createElement("span");
-      state.innerHTML = matches[i].state;
-      li.appendChild(state);
-      list.appendChild(li);
-    }
+   
   }, 500);
- 
-});
+
+}
 
 function findMatches(input, cities) {
   return cities.filter(cityEntry => 
        cityEntry.city.indexOf(input)>=0 || cityEntry.state.indexOf(input)>=0 );
 
 }
+
+inputField.addEventListener("keyup", debounce);
 
 
 
